@@ -2,27 +2,16 @@ var http = require('http');
 
 var helpers = {};
 
-helpers.server = function(opts, cb) {
+helpers.server = function(opts) {
 
-  var default_headers = {'Content-Type': 'application/json'};
-
-  var mirror_response = function(req) {
-    return JSON.stringify({
-      headers: req.headers,
-      body: req.body
-    })
-  }
+  var default_headers = {'Content-Type': 'text/html'};
 
   var finish = function(req, res) {
     res.writeHead(opts.code || 200, opts.headers || default_headers);
-    res.end(opts.response || mirror_response(req));
+    res.end(opts.response || 'Hello there.');
   }
 
   var server = http.createServer(function(req, res){
-
-    req.setEncoding('utf8'); // get as string
-    req.body = '';
-    req.on('data', function(str) { req.body += str })
 
     setTimeout(function(){
       finish(req, res);
@@ -30,7 +19,7 @@ helpers.server = function(opts, cb) {
 
   })
 
-  server.listen(opts.port, cb);
+  server.listen(opts.port);
   return server;
 
 }
